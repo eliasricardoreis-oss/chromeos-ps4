@@ -1,0 +1,41 @@
+ChromeOS for PS4 1.00  (build 2026-11-12 15:28)
+================================================
+
+Package: IV0000-CROS00001_00-CHROMEOSPS4INSTL.pkg  (ChromeOS Flex 16805.36.0, release build)
+Needs:   jailbroken PS4 with GoldHEN (tested 2.4), BinLoader on (port 9090), a TV on HDMI.
+How to use, troubleshooting, building: README.md.  Credits: CREDITS.md.
+Source code: chromeos-ps4-1.00-src.tar.xz (this project's code; links to all upstream
+sources are in README.md).
+
+Install, in short
+  1. Install the PKG, launch "ChromeOS for PS4" (copies ~1 GB).
+  2. Choose PS4 drive or USB drive, then the size (32 GB recommended).
+  3. PS4 drive: the app reserves the space (live speed and time left), waits ~30 s for
+     the drive, then starts Linux by itself. Orange LED = installing (~10 min).
+  4. ChromeOS welcome screen. Later launches boot within seconds.
+
+New in this build
+  - Install questions in the app (where + size); the reserve matches the size.
+  - Fast install: space reserved from OrbisOS (~150 MB/s on the tested Slim) instead of
+    a Linux zero-fill (~13 MB/s). First install ~15 min instead of ~50 for 32 GB.
+  - Error handling: clear dialogs (no GoldHEN access, drive full, write errors, size no
+    longer fits); a failed boot shows the error, saves /data/linux/boot/chromeos-error.txt
+    and restarts into OrbisOS after 60 s; a kernel panic restarts after 30 s.
+  - X confirms in the app's dialogs.
+  - Later launches skip the copy.
+
+Tested (2026-11-12)
+  PS4 Slim (Baikal): install 32 GB and 64 GB (fast reserve, single launch), Wi-Fi,
+                     Bluetooth, HDMI audio, restart, power off.
+  PS4 Fat CUH-1115A (Aeolia), stock drive: clean install with this app (32 GB, single
+                     launch: reserve 10 min at 59 MB/s, 30 s drive wait, install),
+                     Wi-Fi, Bluetooth, HDMI audio, restart, power off.
+  Built but not yet run on a console: the release error screen and the panic restart.
+  Not tested: PS4 Pro, Belize consoles, USB-drive install.
+
+Known limits
+  - HDMI audio only (the Fat's optical output is off). No boot chime.
+  - ChromeOS does not update itself; updates come as a new PKG.
+
+Private use only: the ChromeOS Flex image and the GPU / Wi-Fi firmware inside are not
+ours to redistribute.

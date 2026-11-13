@@ -1,0 +1,16 @@
+# build outputs and downloads (not in the repo; see README)
+*.pkg
+*.sqfs
+*.cpio.gz
+*.img
+*.img.xz
+out/
+dl/
+work/
+kbuild-*/
+mesa/src/
+mesa/build/
+mesa/out/
+pkg/installer/assets/
+pkg/installer/build/
+initramfs/stage/

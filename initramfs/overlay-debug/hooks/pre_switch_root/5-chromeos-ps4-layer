@@ -1,0 +1,5 @@
+#!/bin/sh
+# Debug build: PS4 layer, boot log, then shell test or logger + Upstart --debug.
+cros_ps4_layer
+cros_dump_log "pre_switch_root, layer done"
+cros_shell_mode || { cros_start_logger; cros_debug_init; }

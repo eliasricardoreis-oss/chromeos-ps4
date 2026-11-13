@@ -1,0 +1,3 @@
+#!/bin/sh
+# Release build: only the read-only PS4 layer (firmware, patched Mesa, Upstart overrides).
+cros_ps4_layer
