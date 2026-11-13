@@ -35,8 +35,8 @@ few fixes.
 ## How to use
 
 ### What you need
-- A jailbroken PS4 with **GoldHEN** (tested with 2.4) and its **BinLoader** turned on
-  (port 9090).
+- A jailbroken PS4 on **firmware 5.05 up to 14.00** (the range the Linux loader supports)
+  with **GoldHEN** (tested with 2.4) and its **BinLoader** turned on (port 9090).
 - A TV on HDMI.
 - Free space on the PS4 drive: the storage size you pick + about 4 GB, plus 10 GB that
   always stay free. With the recommended 32 GB that is about 47 GB.

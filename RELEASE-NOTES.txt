@@ -2,7 +2,8 @@ ChromeOS for PS4 1.00  (build 2026-11-12 15:28)
 ================================================
 
 Package: IV0000-CROS00001_00-CHROMEOSPS4INSTL.pkg  (ChromeOS Flex 16805.36.0, release build)
-Needs:   jailbroken PS4 with GoldHEN (tested 2.4), BinLoader on (port 9090), a TV on HDMI.
+Needs:   jailbroken PS4 on firmware 5.05 up to 14.00, GoldHEN (tested 2.4), BinLoader on
+         (port 9090), a TV on HDMI.
 How to use, troubleshooting, building: README.md.  Credits: CREDITS.md.
 Source code: chromeos-ps4-1.00-src.tar.xz (this project's code; links to all upstream
 sources are in README.md).
