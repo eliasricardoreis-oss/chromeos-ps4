@@ -11,7 +11,7 @@ few fixes.
 
 ## What works
 
-| | PS4 Fat CUH-1115A (Aeolia) | PS4 Slim (Baikal) | Pro ( Baikal) 
+| | PS4 Fat CUH-1115A (Aeolia) | PS4 Slim (Baikal) | Pro (Baikal) 
 |---|---|---|----|
 | Install from the app, welcome screen | yes | yes | yes
 | Graphics (radeonsi, PS4-patched Mesa) | yes | yes | yes
