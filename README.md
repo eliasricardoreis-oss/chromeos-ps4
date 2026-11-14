@@ -6,10 +6,6 @@ PS4 needs around it: the boot and install, a PS4 Linux kernel, PS4 graphics driv
 few fixes.
 
 **Version 1.00** (2026-11-12): ChromeOS Flex 16805.36.0, Strawberry PS4 Linux 7.3.3, Mesa 24.0.9.
-
-> **Private use only.** The PKG contains the ChromeOS Flex image and proprietary GPU and
-> Wi-Fi firmware, which are not ours to redistribute. Don't post the PKG publicly.
-
 ---
 
 ## What works
