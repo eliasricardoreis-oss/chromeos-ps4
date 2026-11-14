@@ -11,15 +11,14 @@ few fixes.
 
 ## What works
 
-| | PS4 Fat CUH-1115A (Aeolia) | PS4 Slim (Baikal) |
-|---|---|---|
-| Install from the app, welcome screen | yes | yes (32 GB and 64 GB tested) |
-| Graphics (radeonsi, PS4-patched Mesa) | yes | yes |
-| Wi-Fi, Bluetooth | yes | yes |
-| HDMI audio (default output) | yes | yes |
-| Restart, power off from ChromeOS | yes | yes |
+| | PS4 Fat CUH-1115A (Aeolia) | PS4 Slim (Baikal) | Pro ( Baikal) 
+|---|---|---|----|
+| Install from the app, welcome screen | yes | yes | yes
+| Graphics (radeonsi, PS4-patched Mesa) | yes | yes | yes
+| Wi-Fi, Bluetooth | yes | yes | yes
+| HDMI audio (default output) | yes | yes | yes
+| Restart, power off from ChromeOS | yes | yes | yes
 
-**Not tested:** PS4 Pro, Belize consoles, installing to a USB drive.
 
 **Known limits**
 - Audio is HDMI only. The Fat's optical output is turned off so ChromeOS uses HDMI.
