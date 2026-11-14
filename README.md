@@ -1,5 +1,5 @@
 # ChromeOS for PS4
-
+[DOWNLOAD](https://github.com/theJetsetlife/chromeos-ps4/releases)
 Runs **ChromeOS Flex** on a jailbroken PlayStation 4, installed from a PS4 app. ChromeOS
 itself is Google's image, unchanged and verified at every boot. This project adds what the
 PS4 needs around it: the boot and install, a PS4 Linux kernel, PS4 graphics drivers and a
