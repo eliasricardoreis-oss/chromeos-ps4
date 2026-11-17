@@ -15,9 +15,9 @@ jobs:
     steps:
       - name: Dependencias
         run: sudo apt-get update && sudo apt-get install -y build-essential clang llvm yasm zip
-      - name: Baixar o loader (master ja tem 14.02)
+      - name: Baixar o loader v25.3 (release com 14.02, NAO o master)
         run: |
-          git clone --depth 1 https://github.com/ArabPixel/ps4-linux-loader loader
+          git clone --depth 1 --branch v25.3 https://github.com/ArabPixel/ps4-linux-loader loader
           grep -q "1402" loader/linux/Makefile
       - name: Compilar
         run: cd loader/linux && make
