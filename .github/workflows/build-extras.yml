@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Compilar (estatico, x86-64 simples: o Jaguar nao tem AVX2)
+      - name: "Compilar estatico em x86-64 simples (o Jaguar nao tem AVX2)"
         run: |
           mkdir -p out
           gcc -O2 -Wall -march=x86-64 -static -o out/psmove-mouse tools/psmove-mouse/psmove-mouse.c
