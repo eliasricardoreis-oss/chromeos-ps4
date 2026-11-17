@@ -1,4 +1,4 @@
-name: Build extras (loader 14.02 + PS Move mouse)
+name: Build extras (loader 14.02 + sistema leve)
 
 on:
   workflow_dispatch:
@@ -32,21 +32,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with: { name: loader-14.02, path: out/ps4-chromeos-loader.bin }
 
-  psmove:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Compilar estatico em x86-64 simples (o Jaguar nao tem AVX2)"
-        run: |
-          mkdir -p out
-          gcc -O2 -Wall -march=x86-64 -static -o out/psmove-mouse tools/psmove-mouse/psmove-mouse.c
-          strip out/psmove-mouse
-          ! objdump -d out/psmove-mouse | grep -q -E '%ymm|%zmm'
-      - uses: actions/upload-artifact@v4
-        with: { name: psmove-mouse, path: out/psmove-mouse }
-
   bundle:
-    needs: [loader, psmove]
+    needs: [loader]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,7 +44,6 @@ jobs:
           mkdir -p z/ps4/data/linux/boot z/ps4/data/payloads z/pc
           cp dl/loader-14.02/ps4-chromeos-loader.bin z/ps4/data/linux/boot/
           cp dl/loader-14.02/ps4-chromeos-loader.bin z/ps4/data/payloads/
-          cp dl/psmove-mouse/psmove-mouse z/pc/
           cp -r layer-extra z/pc/layer-extra
           cp scripts/make-layer.sh z/pc/make-layer.sh
           cp LEIAME.txt z/
