@@ -1,0 +1,70 @@
+name: Build extras (loader 14.02 + PS Move mouse)
+
+on:
+  workflow_dispatch:
+    inputs:
+      vram_mb:
+        description: "VRAM do loader em MB (precisa bater com o vram.txt do seu build)"
+        default: "1024"
+  push:
+    tags: ["extras-*"]
+
+jobs:
+  loader:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependencias
+        run: sudo apt-get update && sudo apt-get install -y build-essential clang llvm yasm zip
+      - name: Baixar o loader (master ja tem 14.02)
+        run: |
+          git clone --depth 1 https://github.com/ArabPixel/ps4-linux-loader loader
+          grep -q "1402" loader/linux/Makefile
+      - name: Compilar
+        run: cd loader/linux && make
+      - name: Pegar o payload do tamanho certo
+        run: |
+          mkdir -p out
+          V="${{ github.event.inputs.vram_mb || '1024' }}"
+          f=$(find loader -name "linux-*${V}*.bin" | head -1)
+          [ -n "$f" ] || { echo "payload ${V}MB nao encontrado:"; find loader -name 'linux-*.bin'; exit 1; }
+          cp "$f" out/ps4-chromeos-loader.bin
+          ls -l out
+      - uses: actions/upload-artifact@v4
+        with: { name: loader-14.02, path: out/ps4-chromeos-loader.bin }
+
+  psmove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilar (estatico, x86-64 simples: o Jaguar nao tem AVX2)
+        run: |
+          mkdir -p out
+          gcc -O2 -Wall -march=x86-64 -static -o out/psmove-mouse tools/psmove-mouse/psmove-mouse.c
+          strip out/psmove-mouse
+          ! objdump -d out/psmove-mouse | grep -q -E '%ymm|%zmm'
+      - uses: actions/upload-artifact@v4
+        with: { name: psmove-mouse, path: out/psmove-mouse }
+
+  bundle:
+    needs: [loader, psmove]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { path: dl }
+      - name: Montar o zip de troca
+        run: |
+          mkdir -p z/ps4/data/linux/boot z/ps4/data/payloads z/pc
+          cp dl/loader-14.02/ps4-chromeos-loader.bin z/ps4/data/linux/boot/
+          cp dl/loader-14.02/ps4-chromeos-loader.bin z/ps4/data/payloads/
+          cp dl/psmove-mouse/psmove-mouse z/pc/
+          cp -r layer-extra z/pc/layer-extra
+          cp scripts/make-layer.sh z/pc/make-layer.sh
+          cp LEIAME.txt z/
+          (cd z && zip -r ../chromeos-ps4-swap.zip .)
+      - uses: actions/upload-artifact@v4
+        with: { name: chromeos-ps4-swap, path: chromeos-ps4-swap.zip }
+      - name: Release (so em tag extras-*)
+        if: startsWith(github.ref, 'refs/tags/extras-')
+        uses: softprops/action-gh-release@v2
+        with: { files: chromeos-ps4-swap.zip }
