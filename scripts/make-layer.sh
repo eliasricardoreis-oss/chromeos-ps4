@@ -32,13 +32,6 @@ mkdir -p "$S/etc/init"
 for job in boot-update-firmware fwupdtool-update os_install_service; do
   printf '# PS4 layer: job disabled on PS4 (see scripts/make-layer.sh).\nmanual\n' > "$S/etc/init/$job.override"
 done
-# PS Move as a mouse (optional): PSMOVE_BIN=path/to/psmove-mouse scripts/make-layer.sh
-# (the CI workflow builds it; the binary is static x86-64)
-if [ -n "${PSMOVE_BIN:-}" ]; then
-  [ -f "$PSMOVE_BIN" ] || { echo "PSMOVE_BIN not found: $PSMOVE_BIN" >&2; exit 1; }
-  install -D -m 755 "$PSMOVE_BIN" "$S/usr/lib64/psmove-mouse/psmove-mouse"
-  install -D -m 644 "$B/layer-extra/etc/init/psmove-mouse.conf" "$S/etc/init/psmove-mouse.conf"
-fi
 # --- "light" system -------------------------------------------------------------
 # 1) ps4-tune: boot-time sysctl/sysfs tuning (layer-extra/etc/init/ps4-tune.conf).
 install -D -m 644 "$B/layer-extra/etc/init/ps4-tune.conf" "$S/etc/init/ps4-tune.conf"
