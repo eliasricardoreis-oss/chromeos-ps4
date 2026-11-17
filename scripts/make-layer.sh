@@ -32,6 +32,28 @@ mkdir -p "$S/etc/init"
 for job in boot-update-firmware fwupdtool-update os_install_service; do
   printf '# PS4 layer: job disabled on PS4 (see scripts/make-layer.sh).\nmanual\n' > "$S/etc/init/$job.override"
 done
+# PS Move as a mouse (optional): PSMOVE_BIN=path/to/psmove-mouse scripts/make-layer.sh
+# (the CI workflow builds it; the binary is static x86-64)
+if [ -n "${PSMOVE_BIN:-}" ]; then
+  [ -f "$PSMOVE_BIN" ] || { echo "PSMOVE_BIN not found: $PSMOVE_BIN" >&2; exit 1; }
+  install -D -m 755 "$PSMOVE_BIN" "$S/usr/lib64/psmove-mouse/psmove-mouse"
+  install -D -m 644 "$B/layer-extra/etc/init/psmove-mouse.conf" "$S/etc/init/psmove-mouse.conf"
+fi
+# --- "light" system -------------------------------------------------------------
+# 1) ps4-tune: boot-time sysctl/sysfs tuning (layer-extra/etc/init/ps4-tune.conf).
+install -D -m 644 "$B/layer-extra/etc/init/ps4-tune.conf" "$S/etc/init/ps4-tune.conf"
+# 2) Switch off background jobs a PS4 does not need - ONLY those that exist in ROOT-A
+#    (so a wrong name never breaks anything). Override with LIGHT_OFF_JOBS="a b c";
+#    LIGHT_OFF_JOBS="" keeps everything. Crostini (vm_concierge) is NOT in the list.
+ROOTA_L=${ROOTA:-$B/work/reven/root}
+for job in ${LIGHT_OFF_JOBS-metrics_daemon ml-service cupsd cups_proxy avahi}; do
+  if [ -f "$ROOTA_L/etc/init/$job.conf" ]; then
+    printf '# PS4 layer: job disabled to keep the system light.\nmanual\n' > "$S/etc/init/$job.override"
+    echo "light: $job off"
+  else
+    echo "light: $job not in ROOT-A, skipped"
+  fi
+done
 # Updater: updates come from a new recovery image (ROOT-A stays immutable), so ChromeOS's
 # A/B updater must never write ROOT-B/KERN-B inside chromeos.img. It still has to RUN:
 # OOBE's update step waits for it (~3 min, then "Exiting update after retry check timout").
