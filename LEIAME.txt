@@ -1,0 +1,64 @@
+CHROMEOS-PS4  -  ZIP DE TROCA (14.02 + PS Move como mouse)
+==========================================================
+
+PARTE 1 - SUPORTE AO 14.02 (so trocar o loader, sem recompilar nada)
+  O app/kernel/initramfs nao checam firmware. Quem decide e o "loader" (payload).
+  O loader antigo (v25.2) vai ate 14.00. O novo (v25.3+) tem 14.02.
+
+  Console JA instalado (via FTP):
+    ps4/data/linux/boot/ps4-chromeos-loader.bin -> /data/linux/boot/ps4-chromeos-loader.bin
+    ps4/data/payloads/ps4-chromeos-loader.bin   -> /data/payloads/ps4-chromeos-loader.bin
+  Depois abra o app "ChromeOS for PS4" normal (ou GoldHEN > Payloads).
+
+  Para refazer o PKG: copie o mesmo arquivo para
+    pkg/installer/assets/chromeos/ps4-chromeos-loader.bin
+  e rode scripts/make-pkg.sh. ATENCAO: o make-pkg.sh escolhe o loader olhando
+  2 campos de VRAM em offsets fixos (318636/318645) de uma pasta local; se ele reclamar
+  "no loader payload with VRAM=...", pule esse trecho e use o .bin deste zip direto.
+  O workflow usa 1024 MB por padrao: tem que bater com o seu out/vram.txt.
+
+PARTE 2 - PS MOVE COMO MOUSE (precisa refazer o ps4-layer.sqfs)
+  A layer e um sqfs somente-leitura, nao da pra so "trocar um arquivo".
+    pc/psmove-mouse        binario estatico (compilado pelo workflow)
+    pc/layer-extra/        etc/init/psmove-mouse.conf (job do Upstart)
+    pc/make-layer.sh       -> substitui scripts/make-layer.sh do repo
+  No seu build tree:
+    cp pc/make-layer.sh scripts/make-layer.sh
+    cp -r pc/layer-extra ./layer-extra
+    PSMOVE_BIN=/caminho/psmove-mouse scripts/make-layer.sh
+  Depois rode scripts/make-pkg.sh (ou troque so o ps4-layer.sqfs em /data/linux/boot).
+  O daemon usa gyro (como "air mouse"), NAO a camera. Botoes:
+    Gatilho(T)/X = clique esq.  |  Move/O = clique dir.  |  PS = meio
+    Triangulo = scroll cima  |  Quadrado = scroll baixo
+  Segure o Move parado ~1 s ao conectar (calibra o vies do giroscopio).
+
+  NAO TESTADO EM CONSOLE. Pontos de risco:
+   - Offset do giroscopio no relatorio (padrao 25). Se o cursor ficar louco, rode via SSH:
+       /usr/lib64/psmove-mouse/psmove-mouse --dump
+     e ajuste --gyro-off / --swap / --inv-x / --inv-y / --sens na linha "exec" de layer-extra/etc/init/psmove-mouse.conf.
+   - SELinux esta enforcing: o job pode ser negado ao abrir /dev/hidraw* ou /dev/uinput.
+   - O Move precisa estar pareado por Bluetooth (primeiro conecte por USB para pareamento).
+
+COMO USAR O WORKFLOW
+  1. Copie .github/ , tools/ , layer-extra/ , scripts/make-layer.sh , LEIAME.txt para a raiz do seu repo.
+  2. GitHub > Actions > "Build extras" > Run workflow (ou crie a tag extras-1).
+  3. Baixe o artifact "chromeos-ps4-swap" (zip pronto com tudo acima).
+  O workflow NAO compila o ChromeOS inteiro (precisa da imagem do Google, que nao e redistribuivel).
+
+PARTE 3 - SISTEMA LEVE (entra junto na mesma layer da PARTE 2)
+  O make-layer.sh deste zip agora tambem instala:
+   - ps4-tune.conf: ajustes no boot (writeback menor por causa do HD lento, swappiness 100
+     para zram, sem hugepages, read-ahead maior). Cada linha e "best effort".
+   - desliga jobs nao essenciais (metrics_daemon ml-service cupsd cups_proxy avahi) SO SE
+     existirem no ROOT-A; o script imprime "light: X off" ou "skipped".
+     Mude com LIGHT_OFF_JOBS="..." ou LIGHT_OFF_JOBS="" para nao desligar nada.
+  Os nomes dos jobs sao de memoria (nao tive a imagem do Flex aqui para conferir).
+  Ganho extra opcional: loader com menos VRAM (workflow: vram_mb=512 e vram.txt=512), mais RAM
+  livre para o sistema. Nao testado: se a tela ficar preta, volte para 1024.
+
+SOBRE "CHROMEOS NORMAL" (nao Flex)
+  NAO ha suporte e eu nao adicionei de proposito. Imagens de Chromebook (placa/board) iniciam
+  por coreboot/depthcharge e usam crossystem/TPM do firmware; este projeto inicia pelo estilo
+  UEFI do Flex ("cros_efi"). Para rodar uma imagem de Chromebook tem que emular isso no kernel
+  (e o que o projeto Brunch faz com patches), e a placa escolhida nao pode usar AVX2 (o Jaguar
+  do PS4 nao tem). Nao da para fazer sem testar em console.
