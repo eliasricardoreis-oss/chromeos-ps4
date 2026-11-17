@@ -19,6 +19,16 @@ jobs:
         run: |
           git clone --depth 1 --branch v25.3 https://github.com/ArabPixel/ps4-linux-loader loader
           grep -q "1402" loader/linux/Makefile
+      - name: "Corrigir o kexec do 14.02 (a tag v25.3 esqueceu essas 3 linhas)"
+        run: |
+          f=loader/linux/main-aio.c
+          if ! grep -q "case 1402" "$f"; then
+            sed -i '/^asm("kexec_1400:/a asm("kexec_1402:\\n.incbin \\"kexec-build/1402/kexec.bin\\"\\nkexec_1402_end:\\n");' "$f"
+            sed -i '/^extern char kexec_1400\[\]/a extern char kexec_1402[], kexec_1402_end[];' "$f"
+            sed -i '/case 1400: \*start = kexec_1400;/a \    case 1402: *start = kexec_1402; *end = kexec_1402_end; break;' "$f"
+          fi
+          grep -n "1402" "$f"
+          test "$(grep -c 1402 "$f")" -ge 3
       - name: Compilar
         run: cd loader/linux && make
       - name: Pegar o payload do tamanho certo
